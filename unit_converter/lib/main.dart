@@ -74,6 +74,16 @@ class AppState extends State<App> {
       color: Colors.grey[700],
     );
 
+    bool shouldDisableConvertButton() {
+      if (_startMeasure == null || _convertedMeasure == null) {
+        return true;
+      }
+
+      return (_startMeasure.isEmpty ||
+          _convertedMeasure.isEmpty ||
+          _numberFrom == 0);
+    }
+
     var _appTitle = 'Top Measures Converter';
     return MaterialApp(
       title: _appTitle,
@@ -112,7 +122,7 @@ class AppState extends State<App> {
               Text('From', style: labelStyle),
               Spacer(flex: 2),
               Text(
-                  (_numberFrom == null)
+                  (_numberFrom == null || _numberFrom == 0)
                       ? 'Please Enter a Valid Number'
                       : _numberFrom.toString(),
                   style: inputStyle),
@@ -168,15 +178,11 @@ class AppState extends State<App> {
               Spacer(flex: 2),
               RaisedButton(
                 child: Text('Convert', style: inputStyle),
-                onPressed: () {
-                  if (_startMeasure.isEmpty ||
-                      _convertedMeasure.isEmpty ||
-                      _numberFrom == 0) {
-                    return;
-                  } else {
-                    convert(_numberFrom, _startMeasure, _convertedMeasure);
-                  }
-                },
+                onPressed: shouldDisableConvertButton()
+                    ? null
+                    : () {
+                        convert(_numberFrom, _startMeasure, _convertedMeasure);
+                      },
               ),
               Spacer(flex: 2),
               Text((_resultMessage == null) ? '' : _resultMessage,
